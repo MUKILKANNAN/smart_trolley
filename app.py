@@ -18,15 +18,14 @@ CSV_PATH = os.path.join(
     "groceries.csv"
 )
 
-
+from recommender import load_rules
 
 RULES = load_rules(CSV_PATH)
-
-
-
+print("CSV PATH USED:", CSV_PATH)
 
 app = Flask(__name__)
 
+# ------------------ PRODUCT DATABASE ------------------
 # ------------------ PRODUCT DATABASE ------------------
 products_db = {
     "1001": {"name": "Dairy Milk", "price": 40},
@@ -35,13 +34,17 @@ products_db = {
     "1004": {"name": "Lay's Chips", "price": 10}
 }
 
-# Simple recommendation logic (bought together)
-recommendation_map = {
-    "1001": ["Coca Cola", "Lay's Chips"],
-    "1002": ["Dairy Milk"],
-    "1003": ["Coca Cola", "Lay's Chips"],
-    "1004": ["Maggi Noodles"]
+# ------------------ BARCODE → CSV ITEM MAPPING ------------------
+barcode_to_csv_item = {
+    "1001": "chocolate",
+    "1002": "soda",
+    "1003": "whole milk",   # ✅ THIS IS WHAT YOU WANT
+    "1004": "butter"
 }
+
+# ------------------ PRODUCT → CATEGORY MAPPING ------------------
+# These categories MUST exist in groceries.csv
+
 
 cart = {}
 
@@ -79,6 +82,7 @@ def scan_barcode():
     if code not in products_db:
         return jsonify({"success": False})
 
+    # Add to cart
     if code in cart:
         cart[code]['qty'] += 1
     else:
@@ -88,14 +92,22 @@ def scan_barcode():
             "qty": 1
         }
 
-    product_name = products_db[code]['name'].lower()
-    recommendations = get_recommendations(product_name, RULES)
+    # 🔑 THIS IS THE IMPORTANT PART
+    csv_item = barcode_to_csv_item.get(code, "").lower()
 
-    total = sum(i['price'] * i['qty'] for i in cart.values())
+    recommendations = []
+    if csv_item:
+        recommendations = get_recommendations(csv_item, RULES)
+
+    print("Barcode:", code)
+    print("CSV item used:", csv_item)
+    print("Recommendations:", recommendations)
+
+    total = sum(item['price'] * item['qty'] for item in cart.values())
 
     return jsonify({
         "success": True,
-        "product": product_name,
+        "product": products_db[code]['name'],
         "cart": cart,
         "total": total,
         "recommendations": recommendations

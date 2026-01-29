@@ -33,12 +33,19 @@ function updateCart(cart) {
 function updateRecommendations(recs) {
     const ul = document.getElementById("recommendations");
     ul.innerHTML = "";
+
+    if (!recs || recs.length === 0) {
+        ul.innerHTML = "<li>No recommendations available</li>";
+        return;
+    }
+
     recs.forEach(item => {
         let li = document.createElement("li");
         li.textContent = item;
         ul.appendChild(li);
     });
 }
+
 
 // Start camera
 let scanner = new Html5Qrcode("reader");
