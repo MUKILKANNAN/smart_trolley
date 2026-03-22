@@ -8,6 +8,8 @@
     <div class="container bg-white p-5 rounded shadow" style="max-width: 500px; border-top: 5px solid #2874f0;">
         <h3 class="text-center fw-bold">Payment Gateway</h3>
         <h4 class="text-center text-primary mt-3 mb-4">Total: ₹ {{total}}</h4>
+        
+        <!-- Payment Form (Unchanged) -->
         <div class="mb-3">
             <label class="form-label fw-bold">Select Method:</label>
             <select id="method" class="form-select mb-3">
@@ -19,18 +21,39 @@
             <input type="password" id="pin" class="form-control mb-3" placeholder="PIN (if card)">
         </div>
         <button class="btn btn-primary w-100 p-3 fw-bold shadow-sm" onclick="pay()">PAY SECURELY</button>
+        
+        <!-- Success Section (Updated with Redirect Button) -->
         <div id="success" class="d-none text-center mt-4">
             <h5 class="text-success fw-bold">✔ Payment Successful!</h5>
+            
+            <!-- Existing Download Button -->
             <a href="/get_bill" class="btn btn-warning mt-2 w-100 fw-bold shadow-sm">DOWNLOAD PDF RECEIPT</a>
+            
+            <!-- NEW: Start New Shopping Button -->
+            <a href="/?reset=true" class="btn btn-success mt-2 w-100 fw-bold shadow-sm">
+                🛒 Start New Shopping
+            </a>
         </div>
     </div>
+
     <script>
         function pay() {
             let m = document.getElementById('method').value;
             let i = document.getElementById('info').value;
             let p = document.getElementById('pin').value;
-            fetch('/pay', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({method:m, num:i, pin:p, upi:i, bank:i}) })
-            .then(r=>r.json()).then(d=> { if(d.success) document.getElementById('success').classList.remove('d-none'); else alert("Invalid Payment Data!"); });
+            fetch('/pay', { 
+                method:'POST', 
+                headers:{'Content-Type':'application/json'}, 
+                body:JSON.stringify({method:m, num:i, pin:p, upi:i, bank:i}) 
+            })
+            .then(r=>r.json())
+            .then(d=> { 
+                if(d.success) {
+                    document.getElementById('success').classList.remove('d-none'); 
+                } else {
+                    alert("Invalid Payment Data!"); 
+                }
+            });
         }
     </script>
 </body>
