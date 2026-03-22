@@ -220,8 +220,8 @@ document.addEventListener("DOMContentLoaded", function() {
 // --- 4. BLUETOOTH LOGIC ---
 function initBluetooth() {
     let bluetoothDevice, commandCharacteristic, isFollowing = false, rssiHistory = [];
-    const TROLLEY_SERVICE_UUID = '12345678-1234-5678-1234-56789abcdef0';
-    const TROLLEY_COMMAND_UUID = '12345678-1234-5678-1234-56789abcdef1';
+    const TROLLEY_SERVICE_UUID = 'xxxxx';
+    const TROLLEY_COMMAND_UUID = 'xxxxx';
 
     const btnConnect = document.getElementById('btn-connect');
     const btnFollow = document.getElementById('btn-follow');
