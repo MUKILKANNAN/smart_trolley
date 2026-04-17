@@ -1,0 +1,6 @@
+Flask
+fpdf
+python-barcode
+Pillow
+ollama
+gunicorn
